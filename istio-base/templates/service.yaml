@@ -9,11 +9,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: {{ .Values.service.type }}
+  {{- with .Values.service.ports }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
-  selector:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- $s := "selector:" }}
+  {{- $s }}
     app.kubernetes.io/name: {{ include "istio-base.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
