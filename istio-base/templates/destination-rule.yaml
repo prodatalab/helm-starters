@@ -1,0 +1,11 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "istio-base.fullname" . }}
+spec:
+  host: {{ .Values.destinationrule.host }}
+  trafficPolicy: # Apply to all ports
+    {{- with .Values.destinationrule.trafficPolicy.portLevelSettings }}
+    portLevelSettings:
+        {{- toYaml . | nindent 6 }}
+    {{- end }}

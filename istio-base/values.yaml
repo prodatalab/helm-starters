@@ -36,8 +36,8 @@ gateway:
         number: 80
         protocol: HTTP
       hosts:
-        - firstcontactcrypto.com
-        - studio.firstcontactcrypto.com
+        - foo.com
+        - bar.foo.com
       tls:
         httpsRedirect: true
     - port:
@@ -45,12 +45,47 @@ gateway:
         number: 443
         protocol: HTTPS
       hosts:
-        - firstcontactcrypto.com
-        - studio.firstcontactcrypto.com
+        - foo.com
+        - bar.foo.com
       tls:
         mode: SIMPLE
         serverCertificate: /etc/certs/servicecert.pem
         privateKey: /etc/certs/privatekey.pem
 
+virtualservice:
+  hosts:
+    - bar.foo.com
+  gateways: []
+  http:
+    - match:
+      - uri:
+          prefix: "/wpcatalog"
+      - uri:
+          prefix: "/consumercatalog"
+      rewrite:
+        uri: "/newcatalog"
+      route:
+        - destination:
+            host: reviews.prod.svc.cluster.local
+            subset: v2
+    - route:
+      - destination:
+          host: reviews.prod.svc.cluster.local
+          subset: v1
+  tls: []
+  tcp: []
 
 
+destinationrule:
+  host: ratings.prod.svc.cluster.local
+  trafficPolicy:
+    portLevelSettings:
+    - port:
+        number: 80
+      loadBalancer:
+        simple: LEAST_CONN
+    - port:
+        number: 9080
+      loadBalancer:
+        simple: ROUND_ROBIN
+  subsets: []

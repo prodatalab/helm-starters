@@ -1,12 +1,14 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: bar-foo-ext-svc
+  name: {{ include "istio-base.fullname" . }}
 spec:
+  {{- with .Values.virtualservice.hosts }}
   hosts:
-    - bar.foo.com
+    {{- toYaml . | nindent 6 }}
+  {{- end -}}
+  {{- with .Values.virtualservice.http }}
   http:
-  - route:
-    - destination:
-        host: bar.foo.com
-    timeout: 10s
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
