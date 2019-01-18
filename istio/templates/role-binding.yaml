@@ -1,0 +1,42 @@
+{{- if .Values.rolebinding.enabled }}
+{{- if .Values.rolebinding.clusterAdminRole }}
+# Cluster role binding for clusterAdminRole == true
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: {{ template "istio.name" . }}
+    chart: {{ template "istio.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "istio.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "istio.fullname" . }}
+    namespace: {{ .Release.Namespace }}
+{{- else -}}
+# Role binding for clusterAdminRole == false
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: {{ template "istio.name" . }}
+    chart: {{ template "istio.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "istio.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "istio.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "istio.fullname" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end -}}
+{{- end -}}

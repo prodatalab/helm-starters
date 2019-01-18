@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "istio.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "istio.name" . }}
+    helm.sh/chart: {{ include "istio.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.service.type }}
+  {{- with .Values.deployment.nodeSelector }}
+  ports:
+  {{- toYaml . | nindent 6 }}
+  {{- end }}
+
+  selector:
+    app.kubernetes.io/name: {{ include "istio.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

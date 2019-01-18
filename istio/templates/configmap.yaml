@@ -1,0 +1,15 @@
+{{- if .Values.configmap.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "istio.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "istio.name" . }}
+    helm.sh/chart: {{ include "istio.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.configmap.data }}
+data:
+  {{- toYaml . | nindent 4 }}
+{{- end }}
+{{- end -}}

@@ -1,0 +1,188 @@
+# Default values for istio.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  nameOverride: ""
+  fullnameOverride: ""
+
+deployment:
+  replicas: 1
+  image:
+    repository: nginx
+    tag: stable
+    pullPolicy: IfNotPresent
+  # nodeselector, for the pod to be eligible to run on a node, 
+  # the node must have each of the indicated key-value 
+  # pairs as labels (it can have additional labels as well). 
+  # The most common usage is one key-value pair.
+  nodeSelector: {}
+  # Taints and tolerations work together to ensure that pods are 
+  # not scheduled onto inappropriate nodes.
+  tolerations: []
+  # Affinity, a property of pods that attracts them to a set of nodes 
+  # (either as a preference or a hard requirement)
+  affinity: {}
+  # optionally specify how much CPU and memory (RAM) each Container needs.
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+service:
+  type: ClusterIP
+  # a Service can map an incoming port to any targetPort. 
+  # By default the targetPort will be set to the same value 
+  # as the port field.
+  ports:
+    - port: {{ .Values.service.service.port }}
+      targetPort: http
+      # TCP, UDP and SCTP for protocols. The default is TCP.
+      protocol: TCP
+      name: http
+
+gateway:
+  enabled: false
+  gatewaycontroller: ingressgateway             # use istio default controller
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+
+# https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService
+virtualservice:
+  enabled: false
+  hosts:
+    - "*"
+  http:
+    # - match:
+    # - uri:
+    #     exact: /productpage
+    # - uri:
+    #     exact: /login
+    # - uri:
+    #     exact: /logout
+    # - uri:
+    #     prefix: /api/v1/products
+    # route:
+    # - destination:
+    #     host: productpage
+    #     port:
+    #       number: 9080
+
+https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule
+destinationrule:
+  enabled: false
+  host: <name>
+  subsets:
+    # - name: v1
+    #     labels:
+    #     version: v1
+    # - name: v2
+    #     labels:
+    #     version: v2
+
+configmap:
+  enabled: false
+  data: {}
+
+# https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+clusterrole:
+  enabled: false
+  rules:
+#   - nonResourceURLs:
+#   - /
+#   verbs:
+#   - get
+# - apiGroups:
+#   - ""
+#   resources:
+#   - endpoints
+#   verbs:
+#   - get
+# - apiGroups:
+#   - apps
+#   resources:
+#   - statefulsets/status
+#   verbs:
+#   - get- nonResourceURLs:
+#   - /
+#   verbs:
+#   - get
+# - apiGroups:
+#   - ""
+#   resources:
+#   - endpoints
+#   verbs:
+#   - get
+# - apiGroups:
+#   - apps
+#   resources:
+#   - statefulsets/status
+#   verbs:
+#   - get
+
+# https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+clusterrolebinding:
+  enabled: false
+
+# https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+role:
+  enabled: false
+  rules:
+    - apiGroups:
+      - ""
+      resources:
+      - services
+      verbs:
+      - create
+      - get
+      - delete
+      - update
+
+
+# https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+rolebinding:
+  enabled: false
+  clusterAdminRole: false
+
+
+secret:
+  enabled: false
+  type: Opaque
+  data:   
+    token: |-
+      {{ .Files.Get "config1.toml" | b64enc }}
+
+serviceaccount:
+  enabled: false
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  paths: []
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+persistentvolumeclaim:
+  enabled: false
+  existingClaimName:
+  useDynamicProvisioning: true
+  size: 8Gi
+  storageClassName: ""

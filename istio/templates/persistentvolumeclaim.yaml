@@ -1,0 +1,23 @@
+{{- if .Values.persistentvolumeclaim.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "istio.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "istio.name" . }}
+    helm.sh/chart: {{ include "istio.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  {{- if .Values.persistentvolumeclaim.useDynamicProvisioning }}
+  storageClassName: {{ default nil .Values.persistentvolumeclaim.storageClassName | quote }}
+  {{- else }}
+  storageClassName: {{ default "" .Values.persistentvolumeclaim.storageClassName | quote }}
+  {{- end }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.persistentvolumeclaim.size | quote }}
+{{- end }}
+{{- end -}}

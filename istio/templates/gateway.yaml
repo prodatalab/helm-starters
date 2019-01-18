@@ -1,0 +1,17 @@
+{{- if .Values.gateway.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "istio.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "istio.name" . }}
+    helm.sh/chart: {{ include "istio.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  selector:
+    istio: {{ .Values.gateway.gatewaycontroller . }} # use istio default controller
+  {{- with .Values.gateway.nodeSelector }}
+  servers:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
