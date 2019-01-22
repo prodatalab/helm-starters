@@ -8,10 +8,10 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  type: {{ .Values.service.service.type }}
-  {{- with .Values.deployment.nodeSelector }}
+  type: {{ .Values.service.type }}
+  {{- with .Values.service.ports }}
   ports:
-  {{- toYaml . | nindent 6 }}
+    {{- toYaml . | nindent 6 }}
   {{- end }}
 
   selector:

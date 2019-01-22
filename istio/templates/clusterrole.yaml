@@ -10,6 +10,6 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- with .Values.clusterrole.rules }}
 rules:
-  {{- toYaml . | nindent 2 }}
+  {{- toYaml . | nindent 4 }}
 {{- end }}
 {{- end -}}

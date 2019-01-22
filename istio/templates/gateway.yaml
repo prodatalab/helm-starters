@@ -10,8 +10,9 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   selector:
-    istio: {{ .Values.gateway.gatewaycontroller . }} # use istio default controller
-  {{- with .Values.gateway.nodeSelector }}
+    istio: istiogateway
+  {{- with .Values.gateway.servers }}
   servers:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+{{- end -}}

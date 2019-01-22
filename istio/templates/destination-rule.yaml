@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  host: {{ .Values.destinationrule.host . }}
+  host: "blah"
   trafficPolicy:
     loadBalancer:
       simple: RANDOM
@@ -18,4 +18,4 @@ spec:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 {{- end -}}
- 
+
