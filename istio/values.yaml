@@ -6,6 +6,10 @@ global:
   nameOverride: ""
   fullnameOverride: ""
 
+namespace:
+  enabled: false
+  name: ""
+
 deployment:
   replicas: 1
   image:
